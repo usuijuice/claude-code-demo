@@ -3,7 +3,13 @@ import { useState, useEffect } from 'react'
 export default function CardGame() {
   const [deck, setDeck] = useState([])
   const [hand, setHand] = useState([])
-  const [board, setBoard] = useState(Array(11).fill(null)) // 2x6-1 = 11マス（右下はデッキ）
+  // ボード初期化：index 5（右上）は配列、他はnull
+  const initializeBoard = () => {
+    const newBoard = Array(11).fill(null)
+    newBoard[5] = [] // 右上のマスは複数カード可能
+    return newBoard
+  }
+  const [board, setBoard] = useState(initializeBoard()) // 2x6-1 = 11マス（右下はデッキ）
   const [draggedCard, setDraggedCard] = useState(null)
   const [draggedFromIndex, setDraggedFromIndex] = useState(null)
   const [draggedFromLocation, setDraggedFromLocation] = useState(null) // 'hand' or 'board'
@@ -44,7 +50,7 @@ export default function CardGame() {
     }
     setDeck(newDeck)
     setHand([])
-    setBoard(Array(11).fill(null))
+    setBoard(initializeBoard())
   }
 
   // ドラッグ開始（手札から）
@@ -57,6 +63,11 @@ export default function CardGame() {
 
   // ドラッグ開始（ボードから）
   const handleBoardDragStart = (e, card, fromIndex) => {
+    // index 5（右上）からはドラッグ禁止
+    if (fromIndex === 5) {
+      e.preventDefault()
+      return
+    }
     setDraggedCard(card)
     setDraggedFromIndex(fromIndex)
     setDraggedFromLocation('board')
@@ -73,20 +84,38 @@ export default function CardGame() {
   const handleDrop = (e, boardIndex) => {
     e.preventDefault()
     
-    if (draggedCard && board[boardIndex] === null) {
-      // ボードの更新
+    if (draggedCard) {
       const newBoard = [...board]
-      newBoard[boardIndex] = draggedCard
-      setBoard(newBoard)
       
-      if (draggedFromLocation === 'hand') {
-        // 手札から削除
-        const newHand = hand.filter((_, index) => index !== draggedFromIndex)
-        setHand(newHand)
-      } else if (draggedFromLocation === 'board') {
-        // 元のボード位置をクリア
-        newBoard[draggedFromIndex] = null
+      // index 5（右上）は複数カード可能
+      if (boardIndex === 5) {
+        newBoard[5] = [...newBoard[5], draggedCard]
         setBoard(newBoard)
+        
+        if (draggedFromLocation === 'hand') {
+          const newHand = hand.filter((_, index) => index !== draggedFromIndex)
+          setHand(newHand)
+        } else if (draggedFromLocation === 'board' && draggedFromIndex !== 5) {
+          newBoard[draggedFromIndex] = null
+          setBoard(newBoard)
+        }
+      } else if (board[boardIndex] === null) {
+        // 他のマスは1枚のみ
+        newBoard[boardIndex] = draggedCard
+        setBoard(newBoard)
+        
+        if (draggedFromLocation === 'hand') {
+          const newHand = hand.filter((_, index) => index !== draggedFromIndex)
+          setHand(newHand)
+        } else if (draggedFromLocation === 'board') {
+          if (draggedFromIndex === 5) {
+            // 右上から移動する場合は一番上のカードを削除
+            newBoard[5] = newBoard[5].slice(0, -1)
+          } else {
+            newBoard[draggedFromIndex] = null
+          }
+          setBoard(newBoard)
+        }
       }
     }
     
@@ -115,16 +144,28 @@ export default function CardGame() {
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, index)}
             >
-              {card ? (
-                <div 
-                  draggable
-                  onDragStart={(e) => handleBoardDragStart(e, card, index)}
-                  className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg cursor-move"
-                >
-                  <span>{card}</span>
-                </div>
+              {index === 5 ? (
+                // 右上のマス（複数カード可能）
+                Array.isArray(board[5]) && board[5].length > 0 ? (
+                  <div className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-white shadow-md">
+                    <span>{board[5][board[5].length - 1]}</span>
+                  </div>
+                ) : (
+                  <span className="text-gray-400">空</span>
+                )
               ) : (
-                <span className="text-gray-400">空</span>
+                // 他のマス（1枚のみ）
+                card ? (
+                  <div 
+                    draggable
+                    onDragStart={(e) => handleBoardDragStart(e, card, index)}
+                    className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg cursor-move"
+                  >
+                    <span>{card}</span>
+                  </div>
+                ) : (
+                  <span className="text-gray-400">空</span>
+                )
               )}
             </div>
           ))}
