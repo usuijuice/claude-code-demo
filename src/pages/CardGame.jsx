@@ -6,6 +6,7 @@ export default function CardGame() {
   const [board, setBoard] = useState(Array(11).fill(null)) // 2x6-1 = 11マス（右下はデッキ）
   const [draggedCard, setDraggedCard] = useState(null)
   const [draggedFromIndex, setDraggedFromIndex] = useState(null)
+  const [draggedFromLocation, setDraggedFromLocation] = useState(null) // 'hand' or 'board'
 
   // デッキを初期化（1-40のカードをシャッフル）
   useEffect(() => {
@@ -46,10 +47,19 @@ export default function CardGame() {
     setBoard(Array(11).fill(null))
   }
 
-  // ドラッグ開始
+  // ドラッグ開始（手札から）
   const handleDragStart = (e, card, fromIndex) => {
     setDraggedCard(card)
     setDraggedFromIndex(fromIndex)
+    setDraggedFromLocation('hand')
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  // ドラッグ開始（ボードから）
+  const handleBoardDragStart = (e, card, fromIndex) => {
+    setDraggedCard(card)
+    setDraggedFromIndex(fromIndex)
+    setDraggedFromLocation('board')
     e.dataTransfer.effectAllowed = 'move'
   }
 
@@ -69,13 +79,20 @@ export default function CardGame() {
       newBoard[boardIndex] = draggedCard
       setBoard(newBoard)
       
-      // 手札から削除
-      const newHand = hand.filter((_, index) => index !== draggedFromIndex)
-      setHand(newHand)
+      if (draggedFromLocation === 'hand') {
+        // 手札から削除
+        const newHand = hand.filter((_, index) => index !== draggedFromIndex)
+        setHand(newHand)
+      } else if (draggedFromLocation === 'board') {
+        // 元のボード位置をクリア
+        newBoard[draggedFromIndex] = null
+        setBoard(newBoard)
+      }
     }
     
     setDraggedCard(null)
     setDraggedFromIndex(null)
+    setDraggedFromLocation(null)
   }
 
   return (
@@ -99,7 +116,11 @@ export default function CardGame() {
               onDrop={(e) => handleDrop(e, index)}
             >
               {card ? (
-                <div className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-white shadow-md">
+                <div 
+                  draggable
+                  onDragStart={(e) => handleBoardDragStart(e, card, index)}
+                  className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg cursor-move"
+                >
                   <span>{card}</span>
                 </div>
               ) : (
