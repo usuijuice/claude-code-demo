@@ -1,12 +1,104 @@
-# React + Vite
+# Card Game - React + Vite + Tailwind CSS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based card game application featuring drag-and-drop functionality and a 2x6 game board layout.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **40-Card Deck**: Numbered cards from 1-40, shuffled using Fisher-Yates algorithm
+- **Interactive Game Board**: 2x6 grid with 11 playable cells and integrated deck
+- **Drag & Drop**: HTML5 drag-and-drop API for intuitive card movement
+- **Special Cell**: Top-right cell accepts multiple cards (stack), others hold single cards
+- **Responsive Design**: Built with Tailwind CSS v4 for modern styling
 
-## Expanding the ESLint configuration
+## Game Rules
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Click the deck (bottom-right) to draw cards to your hand
+- Drag cards from hand to place on empty board cells
+- Move cards between single-card cells on the board
+- Top-right cell accepts multiple cards in a stack (shows top card number)
+- Cards cannot be removed from the top-right stack cell
+
+## Tech Stack
+
+- **React 18** - Modern React with hooks
+- **Vite** - Fast build tool and development server
+- **Tailwind CSS v4** - Utility-first CSS framework with Vite plugin
+- **React Router v6** - Client-side routing (minimal setup)
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd claude-code-demo
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+### Available Scripts
+
+```bash
+# Development server with hot reload
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Lint code
+npm run lint
+```
+
+## Project Structure
+
+```
+src/
+├── components/
+│   └── Layout.jsx      # Minimal layout wrapper
+├── pages/
+│   └── CardGame.jsx    # Main card game component
+├── App.jsx             # App routing configuration
+├── main.jsx            # Application entry point
+└── index.css           # Tailwind CSS imports
+```
+
+## Game Implementation
+
+### State Management
+- `deck`: Array of shuffled cards (1-40)
+- `hand`: Player's drawn cards
+- `board`: 11-cell array (index 5 is array for multiple cards)
+- `draggedCard`, `draggedFromIndex`, `draggedFromLocation`: Drag state
+
+### Key Components
+- **CardGame.jsx**: Main game logic and UI
+- **Layout.jsx**: Simple wrapper component
+
+### Drag & Drop Logic
+- Hand to board: Place on empty cells or stack in top-right
+- Board to board: Move between single-card cells
+- Top-right stacking: Accepts multiple cards, prevents removal
+
+## Development
+
+This project uses Vite for fast development and building. The development server includes:
+- Hot Module Replacement (HMR)
+- Fast refresh for React components
+- ESLint integration for code quality
+
+## License
+
+This project is private and not licensed for public use.
