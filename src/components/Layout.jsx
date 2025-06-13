@@ -14,6 +14,9 @@ export default function Layout() {
           <li>
             <Link to="/contact">お問い合わせ</Link>
           </li>
+          <li>
+            <Link to="/card-game">カードゲーム</Link>
+          </li>
         </ul>
       </nav>
       <main>
