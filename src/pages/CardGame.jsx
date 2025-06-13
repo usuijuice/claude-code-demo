@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 export default function CardGame() {
   const [deck, setDeck] = useState([])
   const [hand, setHand] = useState([])
-  const [board, setBoard] = useState(Array(12).fill(null)) // 2x6 = 12マス
+  const [board, setBoard] = useState(Array(11).fill(null)) // 2x6-1 = 11マス（右下はデッキ）
   const [draggedCard, setDraggedCard] = useState(null)
   const [draggedFromIndex, setDraggedFromIndex] = useState(null)
 
@@ -43,7 +43,7 @@ export default function CardGame() {
     }
     setDeck(newDeck)
     setHand([])
-    setBoard(Array(12).fill(null))
+    setBoard(Array(11).fill(null))
   }
 
   // ドラッグ開始
@@ -89,7 +89,7 @@ export default function CardGame() {
 
 
       <div className="mb-20">
-        <div className="relative max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <div className="grid grid-cols-6 gap-4">
           {board.map((card, index) => (
             <div
@@ -107,10 +107,9 @@ export default function CardGame() {
               )}
             </div>
           ))}
-          </div>
           
-          {/* デッキを右下に配置 */}
-          <div className="absolute -bottom-4 -right-4 translate-y-full">
+          {/* デッキを右下（6列目）に配置 */}
+          <div className="w-24 h-36 flex items-center justify-center">
             {deck.length > 0 ? (
               <div 
                 onClick={drawCard}
@@ -121,6 +120,7 @@ export default function CardGame() {
             ) : (
               <div className="w-20 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-xl">空</div>
             )}
+          </div>
           </div>
         </div>
       </div>
