@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import '../styles/CardGame.css'
 
 export default function CardGame() {
   const [deck, setDeck] = useState([])
@@ -44,41 +43,41 @@ export default function CardGame() {
   }
 
   return (
-    <div className="card-game">
-      <h1>カードゲーム</h1>
+    <div className="p-8 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold text-center mb-6">カードゲーム</h1>
       
-      <div className="game-info">
+      <div className="flex gap-8 justify-center mb-8 text-lg">
         <p>デッキの残り枚数: {deck.length}枚</p>
         <p>手札の枚数: {hand.length}枚</p>
       </div>
 
-      <div className="game-controls">
-        <button onClick={drawCard} disabled={deck.length === 0}>
+      <div className="flex gap-4 justify-center mb-12">
+        <button onClick={drawCard} disabled={deck.length === 0} className="px-6 py-3 text-base rounded-lg bg-green-500 text-white cursor-pointer transition-colors hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
           カードを引く
         </button>
-        <button onClick={resetGame}>
+        <button onClick={resetGame} className="px-6 py-3 text-base rounded-lg bg-red-500 text-white cursor-pointer transition-colors hover:bg-red-600">
           ゲームをリセット
         </button>
       </div>
 
-      <div className="deck-section">
-        <h2>デッキ</h2>
-        <div className="deck">
+      <div className="mb-8">
+        <h2 className="text-center mb-4 text-xl font-semibold">デッキ</h2>
+        <div className="flex justify-center mb-8">
           {deck.length > 0 ? (
-            <div className="card card-back">
+            <div className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-gray-800 text-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg">
               <span>?</span>
             </div>
           ) : (
-            <div className="empty-deck">空</div>
+            <div className="w-20 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-xl">空</div>
           )}
         </div>
       </div>
 
-      <div className="hand-section">
-        <h2>手札</h2>
-        <div className="hand">
+      <div className="mb-8">
+        <h2 className="text-center mb-4 text-xl font-semibold">手札</h2>
+        <div className="flex flex-wrap gap-4 justify-center min-h-32">
           {hand.map((card, index) => (
-            <div key={index} className="card">
+            <div key={index} className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg">
               <span>{card}</span>
             </div>
           ))}
