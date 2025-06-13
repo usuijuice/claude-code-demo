@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 export default function CardGame() {
   const [deck, setDeck] = useState([])
   const [hand, setHand] = useState([])
-  const [board, setBoard] = useState(Array(10).fill(null)) // 2x5 = 10マス
+  const [board, setBoard] = useState(Array(12).fill(null)) // 2x6 = 12マス
   const [draggedCard, setDraggedCard] = useState(null)
   const [draggedFromIndex, setDraggedFromIndex] = useState(null)
 
@@ -43,7 +43,7 @@ export default function CardGame() {
     }
     setDeck(newDeck)
     setHand([])
-    setBoard(Array(10).fill(null))
+    setBoard(Array(12).fill(null))
   }
 
   // ドラッグ開始
@@ -87,31 +87,17 @@ export default function CardGame() {
         <p>手札の枚数: {hand.length}枚</p>
       </div>
 
-      <div className="flex gap-4 justify-center mb-12">
-        <button onClick={drawCard} disabled={deck.length === 0} className="px-6 py-3 text-base rounded-lg bg-green-500 text-white cursor-pointer transition-colors hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
-          カードを引く
-        </button>
+      <div className="flex justify-center mb-4">
         <button onClick={resetGame} className="px-6 py-3 text-base rounded-lg bg-red-500 text-white cursor-pointer transition-colors hover:bg-red-600">
           ゲームをリセット
         </button>
       </div>
 
-      <div className="mb-8">
-        <h2 className="text-center mb-4 text-xl font-semibold">デッキ</h2>
-        <div className="flex justify-center mb-8">
-          {deck.length > 0 ? (
-            <div className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-gray-800 text-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg">
-              <span>?</span>
-            </div>
-          ) : (
-            <div className="w-20 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-xl">空</div>
-          )}
-        </div>
-      </div>
 
-      <div className="mb-8">
+      <div className="mb-20">
         <h2 className="text-center mb-4 text-xl font-semibold">ゲームボード</h2>
-        <div className="grid grid-cols-5 gap-4 max-w-2xl mx-auto mb-8">
+        <div className="relative max-w-3xl mx-auto">
+          <div className="grid grid-cols-6 gap-4">
           {board.map((card, index) => (
             <div
               key={index}
@@ -128,6 +114,24 @@ export default function CardGame() {
               )}
             </div>
           ))}
+          </div>
+          
+          {/* デッキを右下に配置 */}
+          <div className="absolute -bottom-4 -right-4 translate-y-full">
+            <div className="text-center mb-2">
+              <p className="text-sm font-semibold">デッキ</p>
+            </div>
+            {deck.length > 0 ? (
+              <div 
+                onClick={drawCard}
+                className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-gray-800 text-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+              >
+                <span>?</span>
+              </div>
+            ) : (
+              <div className="w-20 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-xl">空</div>
+            )}
+          </div>
         </div>
       </div>
 
