@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react'
 export default function CardGame() {
   const [deck, setDeck] = useState([])
   const [hand, setHand] = useState([])
+  const [board, setBoard] = useState(Array(10).fill(null)) // 2x5 = 10マス
+  const [draggedCard, setDraggedCard] = useState(null)
+  const [draggedFromIndex, setDraggedFromIndex] = useState(null)
 
   // デッキを初期化（1-40のカードをシャッフル）
   useEffect(() => {
@@ -40,6 +43,39 @@ export default function CardGame() {
     }
     setDeck(newDeck)
     setHand([])
+    setBoard(Array(10).fill(null))
+  }
+
+  // ドラッグ開始
+  const handleDragStart = (e, card, fromIndex) => {
+    setDraggedCard(card)
+    setDraggedFromIndex(fromIndex)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  // ドラッグオーバー
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }
+
+  // ドロップ
+  const handleDrop = (e, boardIndex) => {
+    e.preventDefault()
+    
+    if (draggedCard && board[boardIndex] === null) {
+      // ボードの更新
+      const newBoard = [...board]
+      newBoard[boardIndex] = draggedCard
+      setBoard(newBoard)
+      
+      // 手札から削除
+      const newHand = hand.filter((_, index) => index !== draggedFromIndex)
+      setHand(newHand)
+    }
+    
+    setDraggedCard(null)
+    setDraggedFromIndex(null)
   }
 
   return (
@@ -74,10 +110,37 @@ export default function CardGame() {
       </div>
 
       <div className="mb-8">
+        <h2 className="text-center mb-4 text-xl font-semibold">ゲームボード</h2>
+        <div className="grid grid-cols-5 gap-4 max-w-2xl mx-auto mb-8">
+          {board.map((card, index) => (
+            <div
+              key={index}
+              className="w-24 h-36 border-2 border-gray-400 border-dashed rounded-lg flex items-center justify-center bg-gray-50 transition-colors hover:bg-gray-100"
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, index)}
+            >
+              {card ? (
+                <div className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-white shadow-md">
+                  <span>{card}</span>
+                </div>
+              ) : (
+                <span className="text-gray-400">空</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-8">
         <h2 className="text-center mb-4 text-xl font-semibold">手札</h2>
         <div className="flex flex-wrap gap-4 justify-center min-h-32">
           {hand.map((card, index) => (
-            <div key={index} className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg">
+            <div
+              key={index}
+              draggable
+              onDragStart={(e) => handleDragStart(e, card, index)}
+              className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg cursor-move"
+            >
               <span>{card}</span>
             </div>
           ))}
