@@ -80,12 +80,6 @@ export default function CardGame() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6">カードゲーム</h1>
-      
-      <div className="flex gap-8 justify-center mb-8 text-lg">
-        <p>デッキの残り枚数: {deck.length}枚</p>
-        <p>手札の枚数: {hand.length}枚</p>
-      </div>
 
       <div className="flex justify-center mb-4">
         <button onClick={resetGame} className="px-6 py-3 text-base rounded-lg bg-red-500 text-white cursor-pointer transition-colors hover:bg-red-600">
@@ -95,7 +89,6 @@ export default function CardGame() {
 
 
       <div className="mb-20">
-        <h2 className="text-center mb-4 text-xl font-semibold">ゲームボード</h2>
         <div className="relative max-w-3xl mx-auto">
           <div className="grid grid-cols-6 gap-4">
           {board.map((card, index) => (
@@ -118,15 +111,12 @@ export default function CardGame() {
           
           {/* デッキを右下に配置 */}
           <div className="absolute -bottom-4 -right-4 translate-y-full">
-            <div className="text-center mb-2">
-              <p className="text-sm font-semibold">デッキ</p>
-            </div>
             {deck.length > 0 ? (
               <div 
                 onClick={drawCard}
                 className="w-20 h-32 border-2 border-gray-800 rounded-lg flex items-center justify-center text-2xl font-bold bg-gray-800 text-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg cursor-pointer"
               >
-                <span>?</span>
+                <span>{deck.length}</span>
               </div>
             ) : (
               <div className="w-20 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-xl">空</div>
@@ -136,7 +126,6 @@ export default function CardGame() {
       </div>
 
       <div className="mb-8">
-        <h2 className="text-center mb-4 text-xl font-semibold">手札</h2>
         <div className="flex flex-wrap gap-4 justify-center min-h-32">
           {hand.map((card, index) => (
             <div
